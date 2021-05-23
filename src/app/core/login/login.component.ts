@@ -27,7 +27,9 @@ export class LoginComponent implements OnInit {
   }
   onLogin(value){
     this.submitted = true;
+    this.loading= true;
     if(this.loginForm.invalid){
+      this.loading=false;
       return;
     }
     console.log(value);
@@ -35,14 +37,18 @@ export class LoginComponent implements OnInit {
       console.log(res)
       if(res.code == 200){
         Swal.fire('User Authenticated','','success');
+        this.route.navigateByUrl('')
       }else{
         Swal.fire('User Error','','error')
       }
-
+      this.loading=false;
     });
   }
 
   homebutton(){
     this.route.navigateByUrl('')
+  }
+  registerbutton(){
+    this.route.navigateByUrl('/register')
   }
 }
