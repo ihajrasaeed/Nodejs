@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import Swal from 'sweetalert2';
+import { LoginService } from 'src/app/services/login.service';
+import {ApiResponse} from '../../interfaces/response';
+import { Route } from '@angular/compiler/src/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +16,7 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   submitted= false;
   loading= false;
-  constructor(public fb: FormBuilder, public http:HttpClient) {
+  constructor(public fb: FormBuilder, public login:LoginService, public route: Router) {
     this.loginForm = this.fb.group({
       email:['', [Validators.required,Validators.pattern(/^[^\s@]+@[^\s@]+$/)]],
       password:['', Validators.required]
@@ -27,16 +31,18 @@ export class LoginComponent implements OnInit {
       return;
     }
     console.log(value);
-    this.http.post('http://localhost:3000/api/login/',value).subscribe(res =>{
-      console.log(res);
-      var data = JSON.stringify(res)
-      var data2 = JSON.parse(data)
-      if(data2.error == false){
+    this.login.loginUser(value).subscribe((res: ApiResponse) =>{
+      console.log(res)
+      if(res.code == 200){
         Swal.fire('User Authenticated','','success');
       }else{
         Swal.fire('User Error','','error')
       }
 
     });
+  }
+
+  homebutton(){
+    this.route.navigateByUrl('')
   }
 }
